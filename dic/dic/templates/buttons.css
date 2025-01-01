@@ -1,0 +1,184 @@
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background:rgb(43, 18, 107);
+        font-family: Arial, sans-serif;
+    }
+
+    .clock {
+        width: 656px;
+        height: 656px;
+        background: rgb(171, 167, 167);
+        border: 5px solid #333;
+        border-radius: 50%;
+        position: relative;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+    .datebox {
+        width: 100px;
+        height: 40px;
+        background: rgb(209, 207, 207);
+        border: 5px solid #333;
+        border-radius: 5;
+        position: fixed;
+        left: 37%;
+        top: 35%;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+    .yearbox {
+        width: 100px;
+        height: 40px;
+        background: rgb(209, 207, 207);
+        border: 5px solid #333;
+        border-radius: 5;
+        position:fixed;
+        left: 45%;
+        top: 65%;
+
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+    .monthbox {
+        width:100px;
+        height: 40px;
+        background: rgb(209, 207, 207);
+        border: 5px solid #333;
+        border-radius: 5;
+        position:fixed;
+        left: 51%;
+        top: 35%;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+
+    .center {
+        width: 10px;
+        height: 10px;
+        background: #333;
+        border-radius: 5px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+    }
+
+    .hand {
+        width: 50%;
+        height: 2px;
+        background: #333;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform-origin: 0% 50%; /* Origin at the center of the clock face */
+        transform: rotate(90deg); /* Rotate from the vertical */
+        transition: transform 0.05s ease-in-out;
+    }
+
+    .hand.hour {
+        height: 6px;
+        width: 30%;
+        background: #000;
+        border-radius:3px;
+    }
+
+    .hand.minute {
+        height: 4px;
+        width: 45%;
+        background: #444;
+        border-radius:2px;
+
+    }
+
+    .hand.second {
+        height: 2px;
+        width: 180px;
+        background: red;
+        border-radius:1px
+    }
+
+    .number {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+        font-weight: bold;
+        color: #333;
+        transform: translate(-50%, -50%);
+    }
+
+    .linesfor {
+
+        width: 1px;
+        height: 100% ;
+        position: absolute;
+        left: 50%;
+        background-color: #000;
+        
+    }
+
+    .circleone {
+
+        width:88px;
+        height:88px;
+        background: rgb(209, 207, 207);
+        border: 2px solid #333;
+        border-radius: 60px;
+        position: fixed;
+        left:52%;
+        top: 45%;
+    }
+    .circletwo {
+
+        width:96px;
+        height:96px;
+        background: rgb(209, 207, 207);
+        border: 2px solid #333;
+        border-radius: 80px;
+        position: fixed;
+        left:42%;
+        top: 45%;
+    }
+    .circlethree {
+
+        width:60px;
+        height:60px;
+        background: rgb(209, 207, 207);
+        border: 2px solid #333;
+        border-radius: 60px;
+        position: fixed;
+        left:50%;
+        top: 55%;
+    }
+    .circlefour {
+
+        width:60px;
+        height:60px;
+        background: rgb(209, 207, 207);
+        border: 2px solid #333;
+        border-radius: 60px;
+        position: fixed;
+        left:50%;
+        top: 50%;
+    }
+
+
+    /* Positioning numbers */
+    .number[data-number="12"] { top: 5%; left: 50%; }
+    .number[data-number="3"] { top: 50%; left: 95%; }
+    .number[data-number="6"] { bottom: 5%; left: 50%; }
+    .number[data-number="9"] { top: 50%; left: 5%; }
+
+    /* Additional numbers */
+    .number[data-number="1"] { top: 18%; left: 82%; }
+    .number[data-number="2"] { top: 35%; left: 93%; }
+    .number[data-number="4"] { top: 65%; left: 93%; }
+    .number[data-number="5"] { top: 82%; left: 82%; }
+    .number[data-number="7"] { top: 82%; left: 18%; }
+    .number[data-number="8"] { top: 65%; left: 7%; }
+    .number[data-number="10"] { top: 35%; left: 7%; }
+    .number[data-number="11"] { top: 18%; left: 18%; }

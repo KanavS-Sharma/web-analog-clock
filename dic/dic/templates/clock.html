@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Analog Clock</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+
+        .clock {
+            width: 350px;
+            height: 350px;
+            background: white;
+            border: 5px solid #333;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .center {
+            width: 10px;
+            height: 10px;
+            background: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .hand {
+            width: 50%;
+            height: 2px;
+            background: #333;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 50%;
+            transform: rotate(90deg);
+            transition: transform 0.05s linear;
+        }
+
+        .hand.hour {
+            height: 6px;
+            width: 30%;
+            background: #000;
+            border-top-right-radius: 50%;
+            border-bottom-right-radius: 50%;
+        }
+
+        .hand.minute {
+            height: 4px;
+            width: 45%;
+            background: #444;
+            border-top-right-radius: 40%;
+            border-bottom-right-radius: 40%;
+        }
+
+        .hand.second {
+            height: 2px;
+            width: 50%;
+            background: red;
+            transition: none;
+            border-top-right-radius: 40%;
+            border-bottom-right-radius: 40%;
+        }
+
+        .number {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            color: #333;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Numbers positioning */
+        .number[data-number="12"] { top: 3%; left: 50%; }
+        .number[data-number="3"] { top: 51%; left: 98%; }
+        .number[data-number="6"] { bottom: -6%; left: 50%; }
+        .number[data-number="9"] { top: 50%; left: 2%; }
+
+        /* Additional numbers */
+        .number[data-number="1"] { top: 11%; left: 75%; }
+        .number[data-number="2"] { top: 29%; left: 92%; }
+        .number[data-number="4"] { top: 75%; left: 91%; }
+        .number[data-number="5"] { top: 91%; left: 75%; }
+        .number[data-number="7"] { top: 90%; left: 24%; }
+        .number[data-number="8"] { top: 73%; left: 8%; }
+        .number[data-number="10"] { top: 29%; left: 8%; }
+        .number[data-number="11"] { top: 11%; left: 24%; }
+
+        .info-box {
+            position: absolute;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+        }
+
+        .date-display { 
+            height: 18px;
+            width: 29px;
+            top: 19%;
+            left: 42%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .month-display {
+            height: 18px;
+            width: 29px;
+            top: 19%;
+            left: 59%;
+            transform: translate(-50%, -50%); 
+            text-align: center;
+        }
+        .year-display {
+            height: 12px;
+            width: 23px;
+            font-size: 11.5px;
+            bottom: 15%; 
+            left: 29%; 
+            transform: translate(-50%, -50%); 
+            text-align: center;
+        }
+
+        .day-circle {
+            position: absolute;
+            top: 35%;
+            left: 59%;
+            width: 100px;
+            height: 100px;
+            background: #f5f5f5;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            display: flex;
+            justify-content: flex;
+            align-items: normal;
+        }
+
+        .day-circle .hand {
+            height: 2px;
+            width: 34%;
+            background: red;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 50%;
+            border-top-right-radius: 50%;
+            border-bottom-right-radius: 50%;
+        }
+
+        .day-circle .days {
+            position: static;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .day-circle .day {
+            position: absolute;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .day[data-day="Sunday"] { top: 10%; left: 50%; transform: translate(-50%, -50%); }
+        .day[data-day="Monday"] { top: 30%; left: 83%; transform: translate(-50%, -50%); }
+        .day[data-day="Tuesday"] { top: 59%; left: 89%; transform: translate(-50%, -50%); }
+        .day[data-day="Wednesday"] { top: 85%; left: 70%; transform: translate(-50%, -50%); }
+        .day[data-day="Thursday"] { top: 85%; left: 30%; transform: translate(-50%, -50%); }
+        .day[data-day="Friday"] { top: 59%; left: 12%; transform: translate(-50%, -50%); }
+        .day[data-day="Saturday"] { top: 30%; left: 17%; transform: translate(-50%, -50%); }
+
+        .leap-circle {
+            position: absolute;
+            top: 43.5%;
+            left: 67.5%;
+            width: 40px;
+            height: 40px;
+            background: #f5f5f5;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            display: flex;
+            justify-content: flex;
+            align-items: normal;
+        }
+
+        .leap-circle .hand {
+            height: 1.5px;
+            width: 34%;
+            background: red;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 50%;
+            border-top-right-radius: 50%;
+            border-bottom-right-radius: 50%;
+        }
+
+        .leap-circle .yearss {
+            position: static;
+            font-size: 7px;
+            text-align: center;
+        }
+
+        .leap-circle .years {
+            position: absolute;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .years[data-day="first"] { top: 12%; left: 50%; transform: translate(-50%, -50%); }
+        .years[data-day="second"] { top: 54%; left: 19%; transform: translate(-50%, -50%); }
+        .years[data-day="third"] { top: 54%; left: 89%; transform: translate(-50%, -50%); }
+        .years[data-day="leap"] { top: 88%; left: 50%; transform: translate(-50%, -50%); }
+
+        .gmt-circle {
+            position: absolute;
+            top: 35%;
+            left: 9%;
+            width: 100px;
+            height: 100px;
+            background: #f5f5f5;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            display: flex;
+            justify-content: flex;
+            align-items: normal;
+        }
+
+        .gmt-circle .hand {
+            height: 2px;
+            width: 34%;
+            background: red;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 50%;
+            border-top-right-radius: 50%;
+            border-bottom-right-radius: 50%;
+        }
+
+        .gmt-circle .days {
+            position: static;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .gmt-circle .day {
+            position: absolute;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .day[data-day="12"] { top: 12%; left: 50%; transform: translate(-50%, -50%); }
+        .day[data-day="3"] { top: 54%; left: 19%; transform: translate(-50%, -50%); }
+        .day[data-day="6"] { top: 54%; left: 89%; transform: translate(-50%, -50%); }
+        .day[data-day="9"] { top: 88%; left: 50%; transform: translate(-50%, -50%); }
+
+        .twenty-circle {
+            position: absolute;
+            top: 43.5%;
+            left: 17.5%;
+            width: 40px;
+            height: 40px;
+            background: #f5f5f5;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            display: flex;
+            justify-content: flex;
+            align-items: normal;
+        }
+
+        .twenty-circle .hand {
+            height: 1.5px;
+            width: 34%;
+            background: red;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0% 50%;
+            border-top-right-radius: 50%;
+            border-bottom-right-radius: 50%;
+        }
+
+        .twenty-circle .times {
+            position: static;
+            font-size: 7px;
+            text-align: center;
+        }
+
+        .twenty-circle .time {
+            position: absolute;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .time[data-day="24"] { top: 12%; left: 50%; transform: translate(-50%, -50%); }
+        .time[data-day="18"] { top: 54%; left: 19%; transform: translate(-50%, -50%); }
+        .time[data-day="6"] { top: 54%; left: 89%; transform: translate(-50%, -50%); }
+        .time[data-day="12"] { top: 88%; left: 50%; transform: translate(-50%, -50%); }
+
+
+    </style>
+</head>
+<body>
+    <div class="clock">
+        <div class="info-box date-display" id="dateDisplay"></div>
+        <div class="info-box month-display" id="monthDisplay"></div>
+        <div class="info-box year-display" id="yearDisplay"></div>
+
+        <div class="day-circle">
+            <div class="hand" id="dayHand"></div>
+            <div class="days">
+                <div class="day" data-day="Sunday">Sun</div>
+                <div class="day" data-day="Monday">Mon</div>
+                <div class="day" data-day="Tuesday">Tue</div>
+                <div class="day" data-day="Wednesday">Wed</div>
+                <div class="day" data-day="Thursday">Thu</div>
+                <div class="day" data-day="Friday">Fri</div>
+                <div class="day" data-day="Saturday">Sat</div>
+            </div>
+        </div>
+
+        <div class="leap-circle">
+            <div class="hand" id="leapHand"></div>
+            <div class="yearss">
+                <div class="years" data-day="first">+2</div>
+                <div class="years" data-day="second">+1</div>
+                <div class="years" data-day="third">+3</div>
+                <div class="years" data-day="leap">Ly</div>
+            </div>
+        </div>
+
+        <div class="gmt-circle">
+            <div class="hand" id="gmtHand"></div>
+            <div class="days">
+                <div class="day" data-day="12">12</div>
+                <div class="day" data-day="3">3</div>
+                <div class="day" data-day="6">6</div>
+                <div class="day" data-day="9">9</div>
+            </div>
+        </div>
+
+        <div class="twenty-circle">
+            <div class="hand" id="twentyHand"></div>
+            <div class="times">
+                <div class="time" data-day="24">60</div>
+                <div class="time" data-day="3">15</div>
+                <div class="time" data-day="12">30</div>
+                <div class="time" data-day="18">45</div>
+            </div>
+        </div>
+
+        <div class="center"></div>
+        <div class="hand hour" id="hourHand"></div>
+        <div class="hand minute" id="minuteHand"></div>
+        <div class="hand second" id="secondHand"></div>
+
+          <!-- Numbers -->
+          <div class="number" data-number="12">12</div>
+          <div class="number" data-number="1">1</div>
+          <div class="number" data-number="2">2</div>
+          <div class="number" data-number="3">3</div>
+          <div class="number" data-number="4">4</div>
+          <div class="number" data-number="5">5</div>
+          <div class="number" data-number="6">6</div>
+          <div class="number" data-number="7">7</div>
+          <div class="number" data-number="8">8</div>
+          <div class="number" data-number="9">9</div>
+          <div class="number" data-number="10">10</div>
+          <div class="number" data-number="11">11</div>
+
+    </div>
+
+    <script>
+        function setClock() {
+            const now = new Date();
+
+            const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
+            const minutes = now.getMinutes() ;
+            const hours = now.getHours() ;
+            const day = now.getDay();
+            const leap = now.getFullYear();
+            
+            const secondHand = document.getElementById('secondHand');
+            const minuteHand = document.getElementById('minuteHand');
+            const hourHand = document.getElementById('hourHand');
+            const dayHand = document.getElementById('dayHand');
+            const leapHand = document.getElementById('leapHand');
+        
+
+            const secondsRotation = (seconds / 60) * 360 - 90;
+            const minutesRotation = (minutes / 60) * 360 + (seconds / 60) * 6 - 90;
+            const hoursRotation = ((hours % 12) / 12) * 360 + (minutes / 60) * 30 - 90;
+            const dayRotation = (day / 7) * 360 - 90;
+
+            const nextLeapYear = findNextLeapYear(leap);
+           // const yearsUntilLeap = nextLeapYear - year;
+
+           const leapRotation = (nextLeapYear / 4) * 360 + 90;
+
+
+            secondHand.style.transform = `rotate(${secondsRotation}deg)`;
+            minuteHand.style.transform = `rotate(${minutesRotation}deg)`;
+            hourHand.style.transform = `rotate(${hoursRotation}deg)`;
+            dayHand.style.transform = `rotate(${dayRotation}deg)`;
+            leapHand.style.transform = `rotate(${leapRotation}deg)`;
+            updateDateDisplay(now);
+            requestAnimationFrame(setClock);
+        }
+
+        
+
+function findNextLeapYear(year) {
+    // Leap year calculation: divisible by 4, but not 100 unless also divisible by 400
+    const a=year;
+    while (!(year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0))) {
+        year++;
+    }
+    return (year-a);
+}
+
+
+function updateDateDisplay(date) {
+    const dateDisplay = document.getElementById('dateDisplay');
+    const monthDisplay = document.getElementById('monthDisplay');
+    const yearDisplay = document.getElementById('yearDisplay');
+
+    const optionsDate = { day: 'numeric' };
+    const optionsMonth = { month: 'short' };
+
+    dateDisplay.textContent = date.toLocaleDateString('en-US', optionsDate);
+    monthDisplay.textContent = date.toLocaleDateString('en-US', optionsMonth);
+    yearDisplay.textContent = date.getFullYear();
+}
+
+        requestAnimationFrame(setClock);  //alina.bananovna
+    </script>
+</body>
+</html>
